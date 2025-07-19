@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixi-World - Discover Characters</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fflate@0.7.4/umd/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FBXLoader.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a103c;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #a7b3f2, #e5a9e8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* The canvas container needs a defined size */
+        #planet-container {
+            width: 100%;
+            height: 100%;
+            min-height: 400px;
+            /* Ensure it has height on mobile */
+            cursor: grab;
+        }
+
+        #planet-container:grabbing {
+            cursor: grabbing;
+        }
+
+        .bug-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 24rem;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <div class="relative flex flex-col items-center px-4 sm:px-6 lg:px-8 z-10">
+
+        <header class="sticky top-0 z-50 w-full p-4 md:p-6 bg-[#1a103c]/80 backdrop-blur-sm">
+            <div class="container mx-auto flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M12 21a9 9 0 110-18 9 9 0 010 18z">
+                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 3v1m0 16v1m8-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707">
+                        </path>
+                    </svg>
+                    <span class="text-xl font-bold">Logoipsum</span>
+                </div>
+
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="#" class="text-gray-300 hover:text-white transition-colors">Home</a>
+                    <a href="#" class="text-gray-300 hover:text-white transition-colors">About</a>
+                    <a href="#" class="text-gray-300 hover:text-white transition-colors">Features</a>
+                </nav>
+                <div class="hidden md:flex items-center space-x-4">
+                    <button
+                        class="bg-white/10 hover:bg-white/20 text-white font-medium py-2 px-6 rounded-lg transition-colors">Sign
+                        In</button>
+                    <button
+                        class="bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-2 px-6 rounded-lg transition-colors">Create
+                        Account</button>
+                </div>
+
+                <div class="md:hidden">
+                    <button id="menu-btn" type="button" class="text-white hover:text-gray-300 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16m-7 6h7"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div id="mobile-menu" class="hidden md:hidden mt-4">
+                <nav class="flex flex-col space-y-4">
+                    <a href="#" class="text-gray-300 hover:text-white transition-colors">Home</a>
+                    <a href="#" class="text-gray-300 hover:text-white transition-colors">About</a>
+                    <a href="#" class="text-gray-300 hover:text-white transition-colors">Features</a>
+                    <button
+                        class="bg-white/10 hover:bg-white/20 text-white font-medium py-2 px-6 rounded-lg transition-colors w-full text-left">Sign
+                        In</button>
+                    <button
+                        class="bg-indigo-500 hover:bg-indigo-600 text-white font-medium py-2 px-6 rounded-lg transition-colors w-full text-left">Create
+                        Account</button>
+                </nav>
+            </div>
+        </header>
+
+        <main class="container mx-auto flex flex-col lg:flex-row items-center w-full py-16 md:py-24">
+            <div class="lg:w-1/2 text-center lg:text-left mb-12 lg:mb-0">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4">
+                    Discover <span class="gradient-text">Characters</span><br>in Pixi-World
+                </h1>
+                <p class="text-lg md:text-xl text-gray-300 max-w-xl mx-auto lg:mx-0">
+                    We believe the world is more beautiful as each person gets better. We believe the world is more
+                    beautiful as each person gets better. Person gets better.
+                </p>
+                <button id="get-started-btn"
+                    class="mt-8 bg-white hover:bg-gray-200 text-gray-800 font-bold py-4 px-8 rounded-lg transition-colors text-lg">
+                    Get Started for Free
+                </button>
+            </div>
+            <div class="lg:w-1/2 w-full h-96 lg:h-auto">
+                <div id="planet-container"></div>
+            </div>
+        </main>
+
+        <main class="container mx-auto flex flex-col lg:flex-row items-center w-full py-16 md:py-24 ">
+            <div class="lg:w-1/2 w-full bug-container order-first lg:order-none border border-white rounded-2xl">
+                <img src="./bug.gif" id="bug" alt="A bug that follows the cursor" class="w-20 h-20">
+            </div>
+            <div class="lg:w-1/2 text-center lg:text-right  mt-12  m- lg:mb-0">
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-4">
+                    Explore New <span class="gradient-text">Realms</span><br>Beyond Imagination
+                </h1>
+                <p class="text-lg md:text-xl text-gray-300 max-w-xl mx-auto lg:ml-auto">
+                    A new journey awaits you. Discover worlds built by a community of creators and start your own
+                    adventure today.
+                </p>
+                <button
+                    class="mt-8 bg-white hover:bg-gray-200 text-gray-800 font-bold py-4 px-8 rounded-lg transition-colors text-lg">
+                    Start Exploring
+                </button>
+            </div>
+        </main>
+
+    </div>
+
+    <section class="bg-[#1a103c] py-20 sm:py-24">
+    <div class="container mx-auto px-4">
+
+        <div class="text-center mb-16">
+            <h2 class="text-4xl lg:text-5xl font-bold text-white">Our Clients</h2>
+            <p class="text-lg text-gray-300 mt-4">We have been working with some Fortune 500 clients</p>
+        </div>
+
+        <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
+
+    <div class="flex justify-center items-center bg-white/95 shadow-2xl shadow-purple-600/80 rounded-2xl px-10 py-8 w-64">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google Logo" class="h-10">
+    </div>
+
+    <div class="flex justify-center items-center bg-white/95 shadow-2xl shadow-purple-600/80 rounded-2xl px-10 py-8 w-64 md:-translate-y-6">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/44/Microsoft_logo.svg" alt="Microsoft Logo" class="h-8">
+    </div>
+
+    <div class="flex justify-center items-center bg-white/95 shadow-2xl shadow-purple-600/80 rounded-2xl px-10 py-8 w-64">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple Logo" class="h-10">
+    </div>
+
+</div>
+
+    </div>
+</section>
+
+    <script>
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+
+    <script>
+        let scene, camera, renderer, planet, flyModel;
+        let flydown = false;
+
+        // --- Get the container for the canvas ---
+        const container = document.getElementById('planet-container');
+
+        function init() {
+            document.getElementById('get-started-btn').addEventListener('click', () => {
+                flydown = !flydown;
+            });
+
+            scene = new THREE.Scene();
+
+            // --- Camera aspect ratio based on container, not window ---
+            camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 12; // Adjusted camera position slightly
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+
+            // --- Renderer size based on container, not window ---
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // For sharp text on retina displays
+            renderer.setClearColor(0x000000, 0);
+            container.appendChild(renderer.domElement);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+            const pointLight = new THREE.PointLight(0xffffff, 1);
+            pointLight.position.set(5, 10, 15);
+            scene.add(pointLight);
+
+            const planetGeometry = new THREE.SphereGeometry(5, 64, 64);
+            const planetMaterial = new THREE.MeshStandardMaterial({
+                map: new THREE.TextureLoader().load('./logo.png'),
+                roughness: 0.5,
+                metalness: 0.1
+            });
+            planet = new THREE.Mesh(planetGeometry, planetMaterial);
+            // Removed position.x, let it be centered in its container
+            planet.rotation.y=16;
+            scene.add(planet);
+
+            const fbxLoader = new THREE.FBXLoader();
+            fbxLoader.load('fly.fbx', function (object) {
+                flyModel = object;
+                flyModel.scale.set(5, 5, 5);
+                flyModel.position.set(-20, 10, 5);
+                flyModel.rotation.y = Math.PI * 0.5;
+                scene.add(flyModel);
+            }, undefined, function (error) { console.error(error); });
+
+            // --- Use a ResizeObserver for better container-based resizing ---
+            const resizeObserver = new ResizeObserver(onWindowResize);
+            resizeObserver.observe(container);
+
+            addMouseRotation();
+            animate();
+        }
+
+        function addMouseRotation() {
+            let isMouseDown = false;
+            let previousMousePosition = { x: 0, y: 0 };
+            const domElement = renderer.domElement;
+            domElement.addEventListener('mousedown', (e) => {
+                isMouseDown = true;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+            document.addEventListener('mouseup', () => { isMouseDown = false; });
+            document.addEventListener('mousemove', (e) => {
+                if (!isMouseDown) return;
+                const deltaX = e.clientX - previousMousePosition.x;
+                const deltaY = e.clientY - previousMousePosition.y;
+                planet.rotation.y += deltaX * 0.005;
+                planet.rotation.x += deltaY * 0.005;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+        }
+
+        // --- onWindowResize now updates based on container size ---
+        function onWindowResize() {
+            if (container.clientWidth > 0 && container.clientHeight > 0) {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if(planet.rotation.y>18){
+                planet.rotation.y = 16
+            }
+            planet.rotation.y += 0.005;
+            if (flyModel) {
+                if (!flydown) { flyModel.position.x += 0.1; }
+                flyModel.position.y -= 0.05;
+                if (flyModel.position.x > 20 || flyModel.position.y < -15) {
+                    flyModel.position.set(-20, 10, 5);
+                }
+            }
+            renderer.render(scene, camera);
+        }
+
+        init();
+    </script>
+    <script>
+        const bug = document.getElementById('bug');
+        const bugContainer = bug.closest('.bug-container');
+
+        let bugX = bugContainer.offsetWidth / 2;
+        let bugY = bugContainer.offsetHeight / 2;
+        let targetX = bugX;
+        let targetY = bugY;
+
+        bug.style.position = 'absolute';
+        bug.style.transform = 'translate(-50%, -50%)';
+
+        document.body.addEventListener('mousemove', (e) => {
+            const rect = bugContainer.getBoundingClientRect();
+            targetX = e.clientX - rect.left;
+            targetY = e.clientY - rect.top;
+        });
+
+        function moveBug() {
+            const dx = targetX - bugX;
+            const dy = targetY - bugY;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance > 1) {
+                bugX += dx * 0.02; // Slightly increased speed
+                bugY += dy * 0.02;
+            }
+
+            // --- ADDED: Boundary Clamping Logic ---
+            const halfBugWidth = bug.offsetWidth / 2;
+            const halfBugHeight = bug.offsetHeight / 2;
+
+            // Clamp X coordinate
+            bugX = Math.max(
+                halfBugWidth,
+                Math.min(bugX, bugContainer.offsetWidth - halfBugWidth)
+            );
+            // Clamp Y coordinate
+            bugY = Math.max(
+                halfBugHeight,
+                Math.min(bugY, bugContainer.offsetHeight - halfBugHeight)
+            );
+            // --- End of Boundary Logic ---
+
+            const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+            bug.style.transform = `translate(-50%, -50%) rotate(${angle + 90}deg)`;
+            bug.style.left = `${bugX}px`;
+            bug.style.top = `${bugY}px`;
+
+            requestAnimationFrame(moveBug);
+        }
+
+        moveBug();
+    </script>
+</body>
+
+</html>
